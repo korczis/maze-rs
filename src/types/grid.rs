@@ -38,29 +38,7 @@ impl Grid {
     }
 
     pub fn draw_ascii(&self) {
-        print!("+"); println!("{}", iter::repeat("---+").take(self.x).collect::<String>());
-
-        for y in 0..self.y {
-            let mut top = "|".to_string();
-            let mut bottom = "+".to_string();
-
-            for x in 0..self.x {
-                top += "   ";
-
-                match self.is_linked_indices(x, y, x + 1, y) {
-                    true => top += " ",
-                    false => top += "|"
-                }
-
-                match self.is_linked_indices(x, y, x, y + 1) {
-                    true => bottom += "   +",
-                    false => bottom += "---+",
-                }
-            }
-
-            println!("{}", top);
-            println!("{}", bottom);
-        }
+        print!("{}", self.to_string());
     }
 
     pub fn generate(&mut self) {
@@ -101,6 +79,40 @@ impl Grid {
     pub fn link_indices(&mut self, x1: usize, y1: usize, x2: usize, y2: usize) {
         self.links.insert((x1, y1, x2, y2), true);
         self.links.insert((x2, y2, x1, y1), true);
+    }
+
+    pub fn to_string(&self) -> String {
+        let mut res = String::new();
+        res += "+";
+        res += &iter::repeat("---+").take(self.x).collect::<String>()[..];
+        res += "\n";
+
+        for y in 0..self.y {
+            let mut top = "|".to_string();
+            let mut bottom = "+".to_string();
+
+            for x in 0..self.x {
+                top += "   ";
+
+                match self.is_linked_indices(x, y, x + 1, y) {
+                    true => top += " ",
+                    false => top += "|"
+                }
+
+                match self.is_linked_indices(x, y, x, y + 1) {
+                    true => bottom += "   +",
+                    false => bottom += "---+",
+                }
+            }
+
+            res += &top[..];
+            res += "\n";
+
+            res += &bottom[..];
+            res += "\n";
+        }
+
+        return res;
     }
 
     pub fn unlink(&mut self, cell1: &Cell, cell2: &Cell) {
