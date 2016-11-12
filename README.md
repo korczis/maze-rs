@@ -25,6 +25,12 @@ OPTIONS:
     -x, --width <width>      Width of Maze [default: 5]
 ```
 
+## Output Formats
+
+- [x] ASCII Art
+- [ ] PNG
+- [ ] JSON
+
 ## Example
 
 ```
