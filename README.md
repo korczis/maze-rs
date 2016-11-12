@@ -31,6 +31,16 @@ OPTIONS:
 - [ ] PNG
 - [ ] JSON
 
+## Benchmark
+
+```
+$ time ./target/release/maze -x 1000 -y 1000 > out.txt
+
+real	0m1.423s
+user	0m1.149s
+sys	0m0.241s
+```
+
 ## Example
 
 ```
