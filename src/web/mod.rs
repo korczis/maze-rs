@@ -14,18 +14,26 @@ pub fn start_web<'a>(port: u16) {
 
     let mut router = Router::new();
     router.get("", move |req: &mut Request| -> IronResult<Response> {
+        let mut count: usize = 1;
         let mut height: usize = 5;
         let mut width: usize = 5;
         match req.get_ref::<UrlEncodedQuery>() {
             Ok(ref hashmap) => {
-                if hashmap["height"].len() == 1 {
+                if hashmap.contains_key("count") && hashmap["count"].len() == 1 {
+                    match hashmap["count"][0].parse::<usize>() {
+                        Ok(val) => count = val,
+                        _ => {}
+                    }
+                }
+
+                if hashmap.contains_key("height") && hashmap["height"].len() == 1 {
                     match hashmap["height"][0].parse::<usize>() {
                         Ok(val) => height = val,
                         _ => {}
                     }
                 }
 
-                if hashmap["width"].len() == 1 {
+                if hashmap.contains_key("width") && hashmap["width"].len() == 1 {
                     match hashmap["width"][0].parse::<usize>() {
                         Ok(val) => width = val,
                         _ => {}
@@ -35,10 +43,16 @@ pub fn start_web<'a>(port: u16) {
             Err(ref e) => println!("{:?}", e)
         };
 
-        let mut grid = Grid::new(width, height);
-        grid.generate_sidewinder();
+        let mut res = String::new();
 
-        let response = Response::with((status::Ok, grid.to_string()));
+        for _ in 0..count {
+            let mut grid = Grid::new(width, height);
+            grid.generate_sidewinder();
+            res += &grid.to_string()[..];
+            res += "\n";
+        }
+
+        let response = Response::with((status::Ok, res));
         Ok(response)
     }, "get");
 
