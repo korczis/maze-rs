@@ -41,7 +41,7 @@ fn main() {
             .short("a")
             .long("algorithm")
             .possible_values(&["binary", "sidewinder"])
-            .default_value("binary")
+            .default_value("sidewinder")
         )
         .arg(Arg::with_name("height")
             .help("Height of Maze")
