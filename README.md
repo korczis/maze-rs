@@ -5,6 +5,10 @@ Maze for Programmers (Rust)
 
 [![Build Status](https://travis-ci.org/korczis/maze-rs.svg?branch=master)](https://travis-ci.org/korczis/maze-rs)
 
+## Prerequisites
+
+- [rust](https://www.rust-lang.org/en-US/)
+
 ## Usage
 
 ```

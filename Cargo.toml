@@ -7,8 +7,10 @@ authors = ["Tomas Korcak <korczis@gmail.com>"]
 clap = "2.18.0"
 env_logger = "0.3.5"
 image = "0.10.3"
+iron = "0.4.0"
 log = "0.3.6"
 rand="0.3.14"
+router = "0.4.0"
 serde = "0.8"
 serde_json = "0.8"
 
