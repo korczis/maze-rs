@@ -4,6 +4,13 @@ version = "0.1.0"
 authors = ["Tomas Korcak <korczis@gmail.com>"]
 
 [dependencies]
+clap = "2.18.0"
+env_logger = "0.3.5"
+image = "0.10.3"
+log = "0.3.6"
+rand="0.3.14"
+serde = "0.8"
+serde_json = "0.8"
 
 [lib]
 name = "maze"
