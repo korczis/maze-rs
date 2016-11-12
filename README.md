@@ -21,9 +21,15 @@ FLAGS:
     -v, --verbose    Verbose mode
 
 OPTIONS:
-    -y, --height <height>    Height of Maze [default: 5]
-    -x, --width <width>      Width of Maze [default: 5]
+    -a, --algorithm <algorithm>    Algorithm to use [default: binary]  [values: binary, sidewinder]
+    -y, --height <height>          Height of Maze [default: 5]
+    -x, --width <width>            Width of Maze [default: 5]
 ```
+
+## Generator Algoritms
+
+- [x] Binary
+- [x] Sidewinder
 
 ## Output Formats
 

@@ -41,7 +41,7 @@ impl Grid {
         print!("{}", self.to_string());
     }
 
-    pub fn generate(&mut self) {
+    pub fn generate_binary(&mut self) {
         self.visit(|grid, cell| {
             let mut cells: Vec<Cell> = Vec::new();
 
@@ -59,6 +59,35 @@ impl Grid {
 
             // println!("{:?}", cells);
         });
+    }
+
+    pub fn generate_sidewinder(&mut self) {
+        for y in 0..self.y {
+            let mut cells: Vec<Cell> = Vec::new();
+            for x in 0..self.x {
+                cells.push(self.cells[x][y]);
+
+                let at_eastern_boundary = x == self.x - 1;
+                let at_northern_boundary = y == self.y - 1;
+
+                let should_close_out = at_eastern_boundary || (!at_northern_boundary && rand::thread_rng().gen());
+
+                let mut should_clear = false;
+                if should_close_out {
+                    let member = rand::thread_rng().choose(&cells).unwrap();
+                    if y < (self.y - 1) {
+                        self.link_indices(member.x(), member.y(), member.x(), member.y() + 1);
+                    }
+                    should_clear = true;
+                } else {
+                    self.link_indices(x, y, x + 1, y);
+                }
+
+                if should_clear {
+                    cells.clear();
+                }
+            }
+        }
     }
 
     pub fn is_linked_indices(&self, x1: usize, y1: usize, x2: usize, y2: usize) -> bool {
