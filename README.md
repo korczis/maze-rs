@@ -21,12 +21,16 @@ USAGE:
 
 FLAGS:
     -h, --help       Prints help information
+    -r, --rest       Run REST Server
     -V, --version    Prints version information
     -v, --verbose    Verbose mode
 
 OPTIONS:
-    -a, --algorithm <algorithm>    Algorithm to use [default: binary]  [values: binary, sidewinder]
+    -a, --algorithm <algorithm>    Algorithm to use [default: sidewinder]  [values: binary,
+                                   sidewinder]
+    -f, --format <format>          Output format to use [default: ascii]  [values: ascii, json]
     -y, --height <height>          Height of Maze [default: 5]
+    -p, --rest-port <rest-port>    REST Port [default: 5000]
     -x, --width <width>            Width of Maze [default: 5]
 ```
 
@@ -39,7 +43,7 @@ OPTIONS:
 
 - [x] ASCII Art
 - [ ] PNG
-- [ ] JSON
+- [x] JSON
 
 ## Benchmark
 

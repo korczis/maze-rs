@@ -1,4 +1,7 @@
 extern crate rand;
+extern crate serde_json;
+
+use serde_json::Map;
 
 use std::collections::HashMap;
 use std::iter;
@@ -8,7 +11,7 @@ use rand::Rng;
 
 use super::cell::Cell;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Grid {
     x: usize,
     y: usize,
@@ -37,8 +40,12 @@ impl Grid {
         return grid;
     }
 
-    pub fn draw_ascii(&self) {
+    pub fn print_ascii(&self) {
         print!("{}", self.to_string());
+    }
+
+    pub fn print_json(&self) {
+        println!("{}", self.to_json());
     }
 
     pub fn generate_binary(&mut self) {
@@ -108,6 +115,33 @@ impl Grid {
     pub fn link_indices(&mut self, x1: usize, y1: usize, x2: usize, y2: usize) {
         self.links.insert((x1, y1, x2, y2), true);
         self.links.insert((x2, y2, x1, y1), true);
+    }
+
+    pub fn to_json(&self) -> String {
+        let mut map: Map<String, serde_json::Value> = Map::new();
+        let mut links: Vec<serde_json::value::Value> = Vec::new();
+
+        for link in self.links.keys() {
+            let mut tuple: Vec<serde_json::value::Value> = Vec::new();
+            tuple.push(serde_json::value::Value::U64(link.0 as u64));
+            tuple.push(serde_json::value::Value::U64(link.1 as u64));
+            tuple.push(serde_json::value::Value::U64(link.2 as u64));
+            tuple.push(serde_json::value::Value::U64(link.3 as u64));
+            links.push(serde_json::value::Value::Array(tuple));
+        };
+
+        map.insert("x".to_string(), serde_json::value::Value::U64(self.x as u64));
+        map.insert("y".to_string(), serde_json::value::Value::U64(self.y as u64));
+        map.insert("links".to_string(), serde_json::value::Value::Array(links));
+
+        match serde_json::to_string(&map) {
+            Ok(json) => {
+               return json;
+            },
+            Err(_) => {
+                return String::new()
+            }
+        }
     }
 
     pub fn to_string(&self) -> String {

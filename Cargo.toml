@@ -12,7 +12,9 @@ log = "0.3.6"
 rand="0.3.14"
 router = "0.4.0"
 serde = "0.8"
+serde_derive = "0.8"
 serde_json = "0.8"
+urlencoded = "0.4.1"
 
 [lib]
 name = "maze"
