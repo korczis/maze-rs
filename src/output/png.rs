@@ -14,7 +14,6 @@ pub fn format<T>(grid: &Grid<T>, cell_size: u32, wall_size: u32)
     let imgx = (grid.x() as u32 * cell_size) + (grid.x() as u32 + 1) * wall_size;
     let imgy = (grid.y() as u32 * cell_size) + (grid.y() as u32 + 1) * wall_size;
 
-    info!("Creating image {}x{}", imgx, imgy);
     let mut img = RgbImage::new(imgx, imgy);
 
     let wall_color = Rgb([255, 0, 0]);
