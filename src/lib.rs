@@ -1,3 +1,4 @@
+#![feature(test)]
 #![feature(proc_macro)]
 
 #[macro_use]
@@ -12,6 +13,7 @@ extern crate rand;
 extern crate router;
 extern crate serde;
 extern crate serde_json;
+extern crate test;
 extern crate time;
 extern crate urlencoded;
 

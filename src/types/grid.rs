@@ -323,3 +323,58 @@ impl <T> IndexMut<usize> for Grid<T>
         &mut self.cells[index]
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use super::super::cell::*;
+    use test::Bencher;
+
+    #[bench]
+    fn bench_generate_aldous_broder_10x10(b: &mut Bencher) {
+        b.iter(|| {
+            let mut grid: Grid<BaseCell> = Grid::new(10, 10);
+            grid.generate_aldous_broder();
+        });
+    }
+
+    #[bench]
+    fn bench_generate_aldous_broder_100x100(b: &mut Bencher) {
+        b.iter(|| {
+            let mut grid: Grid<BaseCell> = Grid::new(100, 100);
+            grid.generate_aldous_broder();
+        });
+    }
+
+    #[bench]
+    fn bench_generate_binary_10x10(b: &mut Bencher) {
+        b.iter(|| {
+            let mut grid: Grid<BaseCell> = Grid::new(10, 10);
+            grid.generate_binary();
+        });
+    }
+
+    #[bench]
+    fn bench_generate_binary_100x100(b: &mut Bencher) {
+        b.iter(|| {
+            let mut grid: Grid<BaseCell> = Grid::new(100, 100);
+            grid.generate_binary();
+        });
+    }
+
+    #[bench]
+    fn bench_generate_sidewinder_10x10(b: &mut Bencher) {
+        b.iter(|| {
+            let mut grid: Grid<BaseCell> = Grid::new(10, 10);
+            grid.generate_sidewinder();
+        });
+    }
+
+    #[bench]
+    fn bench_generate_sidewinder_100x100(b: &mut Bencher) {
+        b.iter(|| {
+            let mut grid: Grid<BaseCell> = Grid::new(100, 100);
+            grid.generate_sidewinder();
+        });
+    }
+}

@@ -12,7 +12,7 @@ Maze for Programmers (Rust)
 ## Usage
 
 ```
-$ ./target/debug/maze -h
+$ ./target/release/maze -h
 Maze Generator 0.1.0
 Tomas Korcak <korczis@gmail.com>
 
@@ -26,8 +26,7 @@ FLAGS:
     -v, --verbose    Verbose mode
 
 OPTIONS:
-    -a, --algorithm <algorithm>    Algorithm to use [default: aldous-broder]  [values:
-                                   aldous-broder, binary, sidewinder]
+    -a, --algorithm <algorithm>    Algorithm to use [default: aldous-broder]  [values: aldous-broder, binary, sidewinder]
     -f, --format <format>          Output format to use [default: ascii]  [values: ascii, json]
     -y, --height <height>          Height of Maze [default: 5]
     -p, --rest-port <rest-port>    REST Port [default: 5000]
@@ -47,6 +46,30 @@ OPTIONS:
 - [x] JSON
 
 ## Benchmark
+
+### Low-Level Benchmark
+
+```
+$ cargo bench
+    Finished release [optimized] target(s) in 0.0 secs
+     Running target/release/deps/maze-0b23e703e6e9e01c
+
+running 6 tests
+test types::grid::tests::bench_generate_aldous_broder_100x100 ... bench:  64,849,515 ns/iter (+/- 25,377,838)
+test types::grid::tests::bench_generate_aldous_broder_10x10   ... bench:     230,391 ns/iter (+/- 68,654)
+test types::grid::tests::bench_generate_binary_100x100        ... bench:   5,534,126 ns/iter (+/- 2,441,840)
+test types::grid::tests::bench_generate_binary_10x10          ... bench:      40,329 ns/iter (+/- 10,944)
+test types::grid::tests::bench_generate_sidewinder_100x100    ... bench:   5,448,319 ns/iter (+/- 1,347,872)
+test types::grid::tests::bench_generate_sidewinder_10x10      ... bench:      39,051 ns/iter (+/- 8,453)
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 6 measured
+
+     Running target/release/maze-1018e5569854def3
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured
+```
 
 ### Aldous-Broder
 

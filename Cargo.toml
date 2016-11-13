@@ -2,6 +2,10 @@
 name = "maze"
 version = "0.1.0"
 authors = ["Tomas Korcak <korczis@gmail.com>"]
+repository = "https://github.com/korczis/maze-rs"
+readme = "README.md"
+keywords = ["maze", "labyrinth", "maze-generator", "labyrinth-generator", "game", "fun"]
+license = "MIT"
 
 [dependencies]
 clap = "2.18.0"
