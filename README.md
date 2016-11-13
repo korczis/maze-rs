@@ -48,12 +48,34 @@ OPTIONS:
 
 ## Benchmark
 
-```
-$ time ./target/release/maze -x 1000 -y 1000 > out.txt
+### Aldous-Broder
 
-real	0m1.423s
-user	0m1.149s
-sys	0m0.241s
+```
+$ time ./target/release/maze -a aldous-broder -x 1000 -y 1000 > maze.txt
+
+real	0m16.928s
+user	0m13.188s
+sys	0m3.555s
+```
+
+### Binary
+
+```
+$ time ./target/release/maze -a binary -x 1000 -y 1000 > maze.txt
+
+real	0m1.804s
+user	0m1.476s
+sys	0m0.268s
+```
+
+### Sidewinder
+
+```
+$ time ./target/release/maze -a sidewinder -x 1000 -y 1000 > maze.txt
+
+real	0m1.953s
+user	0m1.539s
+sys	0m0.299s
 ```
 
 ## Example
