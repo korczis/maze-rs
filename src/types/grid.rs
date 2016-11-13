@@ -1,17 +1,14 @@
 extern crate rand;
-extern crate serde_json;
-
-use serde_json::Map;
 
 use std::collections::BTreeSet;
 use std::collections::HashMap;
-use std::iter;
 use std::ops::{Index, IndexMut};
 
-use rand::Rng;
 use rand::distributions::{IndependentSample, Range};
 
 use super::cell::Cell;
+use super::super::generator;
+use super::super::output;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Grid<T>
@@ -55,67 +52,15 @@ impl <T> Grid<T>
     }
 
     pub fn generate_aldous_broder(&mut self) {
-        let mut cell = self.random_cell();
-        let mut unvisited = self.size() - 1;
-
-        while unvisited > 0 {
-            let neighbors = self.neighbors(&cell);
-            let neighbor = rand::thread_rng().choose(&neighbors).unwrap();
-
-            if !self.links.contains_key(&(neighbor.x(), neighbor.y())) {
-                self.link(&cell, &neighbor);
-                unvisited -= 1;
-            }
-
-            cell = neighbor.clone();
-        }
+        generator::aldous_broder::generate(self)
     }
 
     pub fn generate_binary(&mut self) {
-        self.visit(|grid, cell| {
-            let mut cells: Vec<T> = Vec::new();
-
-            if cell.x() < (grid.x - 1) {
-                cells.push(grid[cell.x() + 1][cell.y()].clone());
-            }
-
-            if cell.y() < (grid.y - 1) {
-                cells.push(grid[cell.x()][cell.y() + 1].clone());
-            }
-
-            if cells.len() > 0 {
-                grid.link(cell, rand::thread_rng().choose(&cells).unwrap());
-            }
-        });
+        generator::binary::generate(self)
     }
 
     pub fn generate_sidewinder(&mut self) {
-        for y in 0..self.y {
-            let mut cells: Vec<T> = Vec::new();
-            for x in 0..self.x {
-                cells.push(self.cells[x][y].clone());
-
-                let at_eastern_boundary = x == self.x - 1;
-                let at_northern_boundary = y == self.y - 1;
-
-                let should_close_out = at_eastern_boundary || (!at_northern_boundary && rand::thread_rng().gen());
-
-                let mut should_clear = false;
-                if should_close_out {
-                    let member = rand::thread_rng().choose(&cells).unwrap();
-                    if y < (self.y - 1) {
-                        self.link_indices(member.x(), member.y(), member.x(), member.y() + 1);
-                    }
-                    should_clear = true;
-                } else {
-                    self.link_indices(x, y, x + 1, y);
-                }
-
-                if should_clear {
-                    cells.clear();
-                }
-            }
-        }
+        generator::sidewinder::generate(self)
     }
 
     pub fn is_linked_indices(&self, x1: usize, y1: usize, x2: usize, y2: usize) -> bool {
@@ -202,68 +147,11 @@ impl <T> Grid<T>
     }
 
     pub fn to_json(&self) -> String {
-
-        let mut map: Map<String, serde_json::Value> = Map::new();
-        let mut links: Vec<serde_json::value::Value> = Vec::new();
-
-        for (k, set) in self.links.iter() {
-            for v in set.iter() {
-                let mut tuple: Vec<serde_json::value::Value> = Vec::new();
-                tuple.push(serde_json::value::Value::U64(k.0 as u64));
-                tuple.push(serde_json::value::Value::U64(k.1 as u64));
-
-                tuple.push(serde_json::value::Value::U64(v.0 as u64));
-                tuple.push(serde_json::value::Value::U64(v.1 as u64));
-                links.push(serde_json::value::Value::Array(tuple));
-            }
-        }
-
-        map.insert("x".to_string(), serde_json::value::Value::U64(self.x as u64));
-        map.insert("y".to_string(), serde_json::value::Value::U64(self.y as u64));
-        map.insert("links".to_string(), serde_json::value::Value::Array(links));
-
-        match serde_json::to_string(&map) {
-            Ok(json) => {
-               return json;
-            },
-            Err(_) => {
-                return String::new()
-            }
-        }
+        output::json::format(self)
     }
 
     pub fn to_string(&self) -> String {
-        let mut res = String::new();
-        res += "+";
-        res += &iter::repeat("---+").take(self.x).collect::<String>()[..];
-        res += "\n";
-
-        for y in 0..self.y {
-            let mut top = "|".to_string();
-            let mut bottom = "+".to_string();
-
-            for x in 0..self.x {
-                top += &self.cells[x][y].to_string()[..];
-
-                match self.is_linked_indices(x, y, x + 1, y) {
-                    true => top += " ",
-                    false => top += "|"
-                }
-
-                match self.is_linked_indices(x, y, x, y + 1) {
-                    true => bottom += "   +",
-                    false => bottom += "---+",
-                }
-            }
-
-            res += &top[..];
-            res += "\n";
-
-            res += &bottom[..];
-            res += "\n";
-        }
-
-        return res;
+        output::ascii::format(self)
     }
 
     pub fn unlink(&mut self, cell1: &T, cell2: &T) {
@@ -304,6 +192,14 @@ impl <T> Grid<T>
             }
         }
     }
+
+    pub fn x(&self) -> usize {
+        self.x
+    }
+
+    pub fn y(&self) -> usize {
+        self.y
+    }
 }
 
 impl <T> Index<usize> for Grid<T>
@@ -324,57 +220,3 @@ impl <T> IndexMut<usize> for Grid<T>
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use super::super::cell::*;
-    use test::Bencher;
-
-    #[bench]
-    fn bench_generate_aldous_broder_10x10(b: &mut Bencher) {
-        b.iter(|| {
-            let mut grid: Grid<BaseCell> = Grid::new(10, 10);
-            grid.generate_aldous_broder();
-        });
-    }
-
-    #[bench]
-    fn bench_generate_aldous_broder_100x100(b: &mut Bencher) {
-        b.iter(|| {
-            let mut grid: Grid<BaseCell> = Grid::new(100, 100);
-            grid.generate_aldous_broder();
-        });
-    }
-
-    #[bench]
-    fn bench_generate_binary_10x10(b: &mut Bencher) {
-        b.iter(|| {
-            let mut grid: Grid<BaseCell> = Grid::new(10, 10);
-            grid.generate_binary();
-        });
-    }
-
-    #[bench]
-    fn bench_generate_binary_100x100(b: &mut Bencher) {
-        b.iter(|| {
-            let mut grid: Grid<BaseCell> = Grid::new(100, 100);
-            grid.generate_binary();
-        });
-    }
-
-    #[bench]
-    fn bench_generate_sidewinder_10x10(b: &mut Bencher) {
-        b.iter(|| {
-            let mut grid: Grid<BaseCell> = Grid::new(10, 10);
-            grid.generate_sidewinder();
-        });
-    }
-
-    #[bench]
-    fn bench_generate_sidewinder_100x100(b: &mut Bencher) {
-        b.iter(|| {
-            let mut grid: Grid<BaseCell> = Grid::new(100, 100);
-            grid.generate_sidewinder();
-        });
-    }
-}

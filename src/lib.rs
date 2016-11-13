@@ -17,6 +17,8 @@ extern crate test;
 extern crate time;
 extern crate urlencoded;
 
+pub mod generator;
+pub mod output;
 pub mod types;
 pub mod web;
 
