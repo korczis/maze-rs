@@ -52,7 +52,7 @@ pub fn start_web<'a>(port: u16) {
         let start = PreciseTime::now();
         for _ in 0..count {
             let mut grid: Grid<BaseCell> = Grid::new(width, height);
-            grid.generate_sidewinder();
+            grid.generate_aldous_broder();
 
             res += &grid.to_string()[..];
             res += "\n";
