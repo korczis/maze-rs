@@ -26,8 +26,8 @@ FLAGS:
     -v, --verbose    Verbose mode
 
 OPTIONS:
-    -a, --algorithm <algorithm>    Algorithm to use [default: sidewinder]  [values: binary,
-                                   sidewinder]
+    -a, --algorithm <algorithm>    Algorithm to use [default: aldous-broder]  [values:
+                                   aldous-broder, binary, sidewinder]
     -f, --format <format>          Output format to use [default: ascii]  [values: ascii, json]
     -y, --height <height>          Height of Maze [default: 5]
     -p, --rest-port <rest-port>    REST Port [default: 5000]
