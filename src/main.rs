@@ -19,6 +19,7 @@ const DESCRIPTION: &'static str = "Maze Generator";
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 enum Algorithm {
+    AldousBroder,
     Binary,
     Sidewinder
 }
@@ -28,6 +29,7 @@ impl FromStr for Algorithm {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
+            "aldous-broder" => Ok(Algorithm::AldousBroder),
             "binary" => Ok(Algorithm::Binary),
             "sidewinder" => Ok(Algorithm::Sidewinder),
             _ => Err("no match")
@@ -60,8 +62,8 @@ fn main() {
             .help("Algorithm to use")
             .short("a")
             .long("algorithm")
-            .possible_values(&["binary", "sidewinder"])
-            .default_value("sidewinder")
+            .possible_values(&["aldous-broder", "binary", "sidewinder"])
+            .default_value("aldous-broder")
         )
         .arg(Arg::with_name("format")
             .help("Output format to use")
@@ -123,6 +125,7 @@ fn main() {
 
     let mut grid: Grid<BaseCell> = Grid::new(width, height);
     match algorithm {
+        Ok(Algorithm::AldousBroder) => grid.generate_aldous_broder(),
         Ok(Algorithm::Binary) => grid.generate_binary(),
         Ok(Algorithm::Sidewinder) => grid.generate_sidewinder(),
         Err(_) => {

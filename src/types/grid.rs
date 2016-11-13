@@ -9,6 +9,7 @@ use std::iter;
 use std::ops::{Index, IndexMut};
 
 use rand::Rng;
+use rand::distributions::{IndependentSample, Range};
 
 use super::cell::Cell;
 
@@ -53,6 +54,23 @@ impl <T> Grid<T>
         println!("{}", self.to_json());
     }
 
+    pub fn generate_aldous_broder(&mut self) {
+        let mut cell = self.random_cell();
+        let mut unvisited = self.size() - 1;
+
+        while unvisited > 0 {
+            let neighbors = self.neighbors(&cell);
+            let neighbor = rand::thread_rng().choose(&neighbors).unwrap();
+
+            if !self.links.contains_key(&(neighbor.x(), neighbor.y())) {
+                self.link(&cell, &neighbor);
+                unvisited -= 1;
+            }
+
+            cell = neighbor.clone();
+        }
+    }
+
     pub fn generate_binary(&mut self) {
         self.visit(|grid, cell| {
             let mut cells: Vec<T> = Vec::new();
@@ -68,8 +86,6 @@ impl <T> Grid<T>
             if cells.len() > 0 {
                 grid.link(cell, rand::thread_rng().choose(&cells).unwrap());
             }
-
-            // println!("{:?}", cells);
         });
     }
 
@@ -168,6 +184,17 @@ impl <T> Grid<T>
         }
 
         return res;
+    }
+
+    pub fn random_cell(&self) -> T {
+        let between_x = Range::new(0, self.x);
+        let between_y = Range::new(0, self.y);
+        let mut rng = rand::thread_rng();
+
+        let x = between_x.ind_sample(&mut rng);
+        let y = between_y.ind_sample(&mut rng);
+
+        self.cells[x][y].clone()
     }
 
     pub fn size(&self) -> usize {

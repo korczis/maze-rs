@@ -36,6 +36,7 @@ OPTIONS:
 
 ## Generator Algoritms
 
+- [x] Aldous-Broder
 - [x] Binary
 - [x] Sidewinder
 
