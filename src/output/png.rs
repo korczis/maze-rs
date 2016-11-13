@@ -16,7 +16,7 @@ pub fn format<T>(grid: &Grid<T>, cell_size: u32, wall_size: u32)
 
     let mut img = RgbImage::new(imgx, imgy);
 
-    let wall_color = Rgb([255, 0, 0]);
+    let wall_color = Rgb([0, 255, 0]);
 
     // Top
     draw_filled_rect_mut(&mut img, Rect::at(0, 0).of_size(imgx, wall_size), wall_color);

@@ -42,7 +42,7 @@ OPTIONS:
 ## Output Formats
 
 - [x] ASCII Art
-- [ ] PNG
+- [x] PNG
 - [x] JSON
 
 ## Benchmark
