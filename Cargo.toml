@@ -2,6 +2,7 @@
 name = "maze"
 version = "0.1.0"
 authors = ["Tomas Korcak <korczis@gmail.com>"]
+description = "Maze Generator"
 repository = "https://github.com/korczis/maze-rs"
 readme = "README.md"
 keywords = ["maze", "labyrinth", "maze-generator", "labyrinth-generator", "fun"]
