@@ -3,6 +3,7 @@ extern crate serde_json;
 
 use serde_json::Map;
 
+use std::collections::BTreeSet;
 use std::collections::HashMap;
 use std::iter;
 use std::ops::{Index, IndexMut};
@@ -18,7 +19,7 @@ pub struct Grid<T>
     x: usize,
     y: usize,
     pub cells: Vec<Vec<T>>,
-    pub links: HashMap<(usize, usize, usize, usize), bool>
+    pub links: HashMap<(usize, usize), BTreeSet<(usize, usize)>>
 }
 
 impl <T> Grid<T>
@@ -102,8 +103,17 @@ impl <T> Grid<T>
     }
 
     pub fn is_linked_indices(&self, x1: usize, y1: usize, x2: usize, y2: usize) -> bool {
-        match self.links.get(&(x1, y1, x2, y2)) {
-            Some(link) => link.clone(),
+        match self.links.get(&(x1, y1)) {
+            Some(set) => {
+                match set.get(&(x2, y2)) {
+                    Some(_) => {
+                        true
+                    },
+                    _ => {
+                        false
+                    }
+                }
+            },
             None => false
         }
     }
@@ -117,8 +127,21 @@ impl <T> Grid<T>
     }
 
     pub fn link_indices(&mut self, x1: usize, y1: usize, x2: usize, y2: usize) {
-        self.links.insert((x1, y1, x2, y2), true);
-        self.links.insert((x2, y2, x1, y1), true);
+        self.link_pair(x1, y1, x2, y2);
+        self.link_pair(x2, y2, x1, y1);
+    }
+
+    pub fn link_pair(&mut self, x1: usize, y1: usize, x2: usize, y2: usize) {
+        match self.links.contains_key(&(x1, y1)) {
+            true => {
+                self.links.get_mut(&(x1, y1)).unwrap().insert((x2, y2));
+            },
+            false => {
+                let mut set: BTreeSet<(usize, usize)> = BTreeSet::new();
+                set.insert((x2, y2));
+                self.links.insert((x1, y1), set);
+            }
+        }
     }
 
     pub fn neighbors(&self, cell: &T) -> Vec<T> {
@@ -152,17 +175,21 @@ impl <T> Grid<T>
     }
 
     pub fn to_json(&self) -> String {
+
         let mut map: Map<String, serde_json::Value> = Map::new();
         let mut links: Vec<serde_json::value::Value> = Vec::new();
 
-        for link in self.links.keys() {
-            let mut tuple: Vec<serde_json::value::Value> = Vec::new();
-            tuple.push(serde_json::value::Value::U64(link.0 as u64));
-            tuple.push(serde_json::value::Value::U64(link.1 as u64));
-            tuple.push(serde_json::value::Value::U64(link.2 as u64));
-            tuple.push(serde_json::value::Value::U64(link.3 as u64));
-            links.push(serde_json::value::Value::Array(tuple));
-        };
+        for (k, set) in self.links.iter() {
+            for v in set.iter() {
+                let mut tuple: Vec<serde_json::value::Value> = Vec::new();
+                tuple.push(serde_json::value::Value::U64(k.0 as u64));
+                tuple.push(serde_json::value::Value::U64(k.1 as u64));
+
+                tuple.push(serde_json::value::Value::U64(v.0 as u64));
+                tuple.push(serde_json::value::Value::U64(v.1 as u64));
+                links.push(serde_json::value::Value::Array(tuple));
+            }
+        }
 
         map.insert("x".to_string(), serde_json::value::Value::U64(self.x as u64));
         map.insert("y".to_string(), serde_json::value::Value::U64(self.y as u64));
@@ -217,8 +244,26 @@ impl <T> Grid<T>
     }
 
     pub fn unlink_indices(&mut self, x1: usize, y1: usize, x2: usize, y2: usize) {
-        self.links.remove(&(x1, y1, x2, y2));
-        self.links.remove(&(x2, y2, x1, y1));
+        self.unlink_pair(x1, y1, x2, y2);
+        self.unlink_pair(x2, y2, x1, y1);
+    }
+
+    pub fn unlink_pair(&mut self, x1: usize, y1: usize, x2: usize, y2: usize) {
+        let mut remove = false;
+        match self.links.contains_key(&(x1, y1)) {
+            true => {
+                let set = self.links.get_mut(&(x1, y1)).unwrap();
+                set.remove(&(x2, y2));
+                if set.is_empty() {
+                    remove = true;
+                }
+            },
+            _ => {}
+        }
+
+        if remove {
+            self.links.remove(&(x1, y1));
+        }
     }
 
     pub fn visit<F>(&mut self, mut f: F)
