@@ -135,6 +135,7 @@ fn main() {
     }
 
     debug!("{:?}", grid);
+    grid.to_png(80, 20);
 
     let format = Format::from_str(matches.value_of("format").unwrap());
     match format {

@@ -8,6 +8,8 @@ extern crate serde_derive;
 extern crate log;
 
 extern crate hyper;
+extern crate image;
+extern crate imageproc;
 extern crate iron;
 extern crate rand;
 extern crate router;

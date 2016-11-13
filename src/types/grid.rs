@@ -150,6 +150,10 @@ impl <T> Grid<T>
         output::json::format(self)
     }
 
+    pub fn to_png(&self, cell_size: u32, wall_size: u32) {
+        output::png::format(self, cell_size, wall_size)
+    }
+
     pub fn to_string(&self) -> String {
         output::ascii::format(self)
     }
