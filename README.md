@@ -50,17 +50,18 @@ OPTIONS:
 ### Low-Level Benchmark
 
 ```
-$ cargo bench
+$ cd dev/maze-rs/
+tomaskorcak@kx-mac ~/dev/maze-rs$ cargo bench
     Finished release [optimized] target(s) in 0.0 secs
      Running target/release/deps/maze-0b23e703e6e9e01c
 
 running 6 tests
-test types::grid::tests::bench_generate_aldous_broder_100x100 ... bench:  64,849,515 ns/iter (+/- 25,377,838)
-test types::grid::tests::bench_generate_aldous_broder_10x10   ... bench:     230,391 ns/iter (+/- 68,654)
-test types::grid::tests::bench_generate_binary_100x100        ... bench:   5,534,126 ns/iter (+/- 2,441,840)
-test types::grid::tests::bench_generate_binary_10x10          ... bench:      40,329 ns/iter (+/- 10,944)
-test types::grid::tests::bench_generate_sidewinder_100x100    ... bench:   5,448,319 ns/iter (+/- 1,347,872)
-test types::grid::tests::bench_generate_sidewinder_10x10      ... bench:      39,051 ns/iter (+/- 8,453)
+test generator::aldous_broder::tests::bench_generate_100x100 ... bench:  61,610,364 ns/iter (+/- 24,858,439)
+test generator::aldous_broder::tests::bench_generate_10x10   ... bench:     214,587 ns/iter (+/- 59,722)
+test generator::binary::tests::bench_generate_100x100        ... bench:   5,123,808 ns/iter (+/- 976,614)
+test generator::binary::tests::bench_generate_10x10          ... bench:      38,307 ns/iter (+/- 10,100)
+test generator::sidewinder::tests::bench_generate_100x100    ... bench:   5,063,132 ns/iter (+/- 1,187,545)
+test generator::sidewinder::tests::bench_generate_10x10      ... bench:      38,009 ns/iter (+/- 9,281)
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 6 measured
 
