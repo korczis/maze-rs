@@ -1,9 +1,11 @@
 #[macro_use]
 extern crate log;
-extern crate clap;
 extern crate env_logger;
+
+extern crate clap;
 extern crate maze;
 extern crate serde_json;
+extern crate time;
 
 use clap::{App, Arg};
 use maze::types::cell::BaseCell;
@@ -17,6 +19,10 @@ use std::str::FromStr;
 const AUTHOR: &'static str = "Tomas Korcak <korczis@gmail.com>";
 const DESCRIPTION: &'static str = "Maze Generator";
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+
+const DEFAULT_HEIGHT: usize = 5;
+const DEFAULT_WIDTH: usize = 5;
+const DEFAULT_PORT: u16 = 5000;
 
 enum Algorithm {
     AldousBroder,
@@ -39,7 +45,8 @@ impl FromStr for Algorithm {
 
 enum Format {
     Ascii,
-    Json
+    Json,
+    Png
 }
 
 impl FromStr for Format {
@@ -49,12 +56,17 @@ impl FromStr for Format {
         match s {
             "ascii" => Ok(Format::Ascii),
             "json" => Ok(Format::Json),
+            "png" => Ok(Format::Png),
             _ => Err("no match")
         }
     }
 }
 
 fn main() {
+    let default_height = &DEFAULT_HEIGHT.to_string()[..];
+    let default_width = &DEFAULT_WIDTH.to_string()[..];
+    let default_port = &DEFAULT_PORT.to_string()[..];
+
     let matches = App::new(DESCRIPTION)
         .version(VERSION)
         .author(AUTHOR)
@@ -69,20 +81,20 @@ fn main() {
             .help("Output format to use")
             .short("f")
             .long("format")
-            .possible_values(&["ascii", "json"])
+            .possible_values(&["ascii", "json", "png"])
             .default_value("ascii")
         )
         .arg(Arg::with_name("height")
             .help("Height of Maze")
             .short("y")
             .long("height")
-            .default_value("5")
+            .default_value(default_height)
         )
         .arg(Arg::with_name("width")
             .help("Width of Maze")
             .short("x")
             .long("width")
-            .default_value("5")
+            .default_value(default_width)
         )
         .arg(Arg::with_name("verbose")
             .help("Verbose mode")
@@ -99,7 +111,7 @@ fn main() {
             .help("REST Port")
             .short("p")
             .long("rest-port")
-            .default_value("5000")
+            .default_value(default_port)
         )
         .get_matches();
 
@@ -112,35 +124,60 @@ fn main() {
 
     env_logger::init().unwrap();
 
-    let port: u16 = matches.value_of("rest-port").unwrap().to_string().parse::<u16>().unwrap();
+    let port: u16 = match matches.value_of("rest-port").unwrap().to_string().parse::<u16>() {
+        Ok(val) => val,
+        _ => DEFAULT_PORT
+    };
+
     if matches.is_present("rest") {
         web::start_web(port);
         exit(0);
     }
 
-    let height = matches.value_of("height").unwrap().to_string().parse::<usize>().unwrap();
-    let width = matches.value_of("width").unwrap().to_string().parse::<usize>().unwrap();
+    let height = match matches.value_of("height").unwrap().to_string().parse::<usize>() {
+        Ok(val) => val,
+        _ => DEFAULT_HEIGHT
+    };
+
+    let width = match matches.value_of("width").unwrap().to_string().parse::<usize>() {
+        Ok(val) => val,
+        _ => DEFAULT_WIDTH
+    };
 
     let algorithm = Algorithm::from_str(matches.value_of("algorithm").unwrap());
 
     let mut grid: Grid<BaseCell> = Grid::new(width, height);
     match algorithm {
-        Ok(Algorithm::AldousBroder) => grid.generate_aldous_broder(),
-        Ok(Algorithm::Binary) => grid.generate_binary(),
-        Ok(Algorithm::Sidewinder) => grid.generate_sidewinder(),
+        Ok(Algorithm::AldousBroder) => {
+            info!("Generating maze using Aldous-Broder algorithm");
+            grid.generate_aldous_broder()
+        },
+        Ok(Algorithm::Binary) => {
+            info!("Generating maze using Binary algorithm");
+            grid.generate_binary()
+        },
+        Ok(Algorithm::Sidewinder) => {
+            info!("Generating maze using Sidewinder algorithm");
+            grid.generate_sidewinder()
+        },
         Err(_) => {
-            println!("Invalid algorithm specified");
+            info!("Invalid algorithm specified");
             exit(1);
         }
     }
 
+    grid.print_ascii();
     debug!("{:?}", grid);
-    grid.to_png(80, 20);
 
     let format = Format::from_str(matches.value_of("format").unwrap());
     match format {
         Ok(Format::Ascii) => grid.print_ascii(),
         Ok(Format::Json) => grid.print_json(),
+        Ok(Format::Png) => {
+            let output_filename = "output.png";
+            info!("Writing maze to {:?}", output_filename);
+            grid.to_png(80, 20, output_filename);
+        },
         Err(_) => {
             println!("Invalid format specified");
             exit(1);
