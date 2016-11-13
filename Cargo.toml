@@ -6,6 +6,7 @@ authors = ["Tomas Korcak <korczis@gmail.com>"]
 [dependencies]
 clap = "2.18.0"
 env_logger = "0.3.5"
+hyper = "= 0.9.12"
 image = "0.10.3"
 iron = "0.4.0"
 log = "0.3.6"
@@ -14,6 +15,7 @@ router = "0.4.0"
 serde = "0.8"
 serde_derive = "0.8"
 serde_json = "0.8"
+time = "0.1.35"
 urlencoded = "0.4.1"
 
 [lib]

@@ -1,12 +1,16 @@
 extern crate iron;
 extern crate router;
+extern crate time;
 extern crate urlencoded;
 
+use hyper::header::Headers;
 use iron::prelude::*;
 use iron::status;
 use router::Router;
+use time::PreciseTime;
 use urlencoded::UrlEncodedQuery;
 
+use super::types::cell::BaseCell;
 use super::types::grid::Grid;
 
 pub fn start_web<'a>(port: u16) {
@@ -45,14 +49,23 @@ pub fn start_web<'a>(port: u16) {
 
         let mut res = String::new();
 
+        let start = PreciseTime::now();
         for _ in 0..count {
-            let mut grid = Grid::new(width, height);
+            let mut grid: Grid<BaseCell> = Grid::new(width, height);
             grid.generate_sidewinder();
+
             res += &grid.to_string()[..];
             res += "\n";
         }
+        let end = PreciseTime::now();
 
-        let response = Response::with((status::Ok, res));
+        let mut headers = Headers::new();
+        let diff = start.to(end);
+        let diff_string = format!("{}", diff.num_seconds() as f32 + diff.num_milliseconds() as f32 * 0.001 + diff.num_microseconds().unwrap() as f32 * 1e-6);
+        headers.set_raw("x-time-sec", vec![diff_string.into_bytes()]);
+
+        let mut response = Response::with((status::Ok, res));
+        response.headers = headers;
         Ok(response)
     }, "get");
 

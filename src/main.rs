@@ -6,6 +6,7 @@ extern crate maze;
 extern crate serde_json;
 
 use clap::{App, Arg};
+use maze::types::cell::BaseCell;
 use maze::types::grid::Grid;
 use maze::web;
 
@@ -120,7 +121,7 @@ fn main() {
 
     let algorithm = Algorithm::from_str(matches.value_of("algorithm").unwrap());
 
-    let mut grid = Grid::new(width, height);
+    let mut grid: Grid<BaseCell> = Grid::new(width, height);
     match algorithm {
         Ok(Algorithm::Binary) => grid.generate_binary(),
         Ok(Algorithm::Sidewinder) => grid.generate_sidewinder(),

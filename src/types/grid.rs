@@ -12,15 +12,19 @@ use rand::Rng;
 use super::cell::Cell;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Grid {
+pub struct Grid<T>
+    where T: Cell
+{
     x: usize,
     y: usize,
-    pub cells: Vec<Vec<Cell>>,
+    pub cells: Vec<Vec<T>>,
     pub links: HashMap<(usize, usize, usize, usize), bool>
 }
 
-impl Grid {
-    pub fn new(x: usize, y: usize) -> Grid {
+impl <T> Grid<T>
+    where T: Cell + Clone
+{
+    pub fn new(x: usize, y: usize) -> Grid<T> {
         let mut grid = Grid {
             x: x,
             y: y,
@@ -31,7 +35,7 @@ impl Grid {
         for i in 0..x {
             let mut row = Vec::with_capacity(y);
             for j in 0..y {
-                row.push(Cell::new(i, j));
+                row.push(T::new(i, j));
 
             }
             grid.cells.push(row);
@@ -50,14 +54,14 @@ impl Grid {
 
     pub fn generate_binary(&mut self) {
         self.visit(|grid, cell| {
-            let mut cells: Vec<Cell> = Vec::new();
+            let mut cells: Vec<T> = Vec::new();
 
             if cell.x() < (grid.x - 1) {
-                cells.push(grid[cell.x() + 1][cell.y()]);
+                cells.push(grid[cell.x() + 1][cell.y()].clone());
             }
 
             if cell.y() < (grid.y - 1) {
-                cells.push(grid[cell.x()][cell.y() + 1]);
+                cells.push(grid[cell.x()][cell.y() + 1].clone());
             }
 
             if cells.len() > 0 {
@@ -70,9 +74,9 @@ impl Grid {
 
     pub fn generate_sidewinder(&mut self) {
         for y in 0..self.y {
-            let mut cells: Vec<Cell> = Vec::new();
+            let mut cells: Vec<T> = Vec::new();
             for x in 0..self.x {
-                cells.push(self.cells[x][y]);
+                cells.push(self.cells[x][y].clone());
 
                 let at_eastern_boundary = x == self.x - 1;
                 let at_northern_boundary = y == self.y - 1;
@@ -104,17 +108,47 @@ impl Grid {
         }
     }
 
-    pub fn is_linked(&self, cell1: &Cell, cell2: &Cell) -> bool {
+    pub fn is_linked(&self, cell1: &T, cell2: &T) -> bool {
         self.is_linked_indices(cell1.x(), cell1.y(), cell2.x(), cell2.y())
     }
 
-    pub fn link(&mut self, cell1: &Cell, cell2: &Cell) {
+    pub fn link(&mut self, cell1: &T, cell2: &T) {
         self.link_indices(cell1.x(), cell1.y(), cell2.x(), cell2.y());
     }
 
     pub fn link_indices(&mut self, x1: usize, y1: usize, x2: usize, y2: usize) {
         self.links.insert((x1, y1, x2, y2), true);
         self.links.insert((x2, y2, x1, y1), true);
+    }
+
+    pub fn neighbors(&self, cell: &T) -> Vec<T> {
+        self.neighbors_indices(cell.x(), cell.y())
+    }
+
+    pub fn neighbors_indices(&self, x: usize, y: usize) -> Vec<T> {
+        let mut res = Vec::new();
+
+        if x > 0 {
+            res.push(self.cells[x - 1][y].clone());
+        }
+
+        if x < self.x - 1 {
+            res.push(self.cells[x + 1][y].clone());
+        }
+
+        if y > 0 {
+            res.push(self.cells[x][y - 1].clone());
+        }
+
+        if y < self.y - 1 {
+            res.push(self.cells[x][y + 1].clone());
+        }
+
+        return res;
+    }
+
+    pub fn size(&self) -> usize {
+        self.x * self.y
     }
 
     pub fn to_json(&self) -> String {
@@ -155,7 +189,7 @@ impl Grid {
             let mut bottom = "+".to_string();
 
             for x in 0..self.x {
-                top += "   ";
+                top += &self.cells[x][y].to_string()[..];
 
                 match self.is_linked_indices(x, y, x + 1, y) {
                     true => top += " ",
@@ -178,7 +212,7 @@ impl Grid {
         return res;
     }
 
-    pub fn unlink(&mut self, cell1: &Cell, cell2: &Cell) {
+    pub fn unlink(&mut self, cell1: &T, cell2: &T) {
         self.unlink_indices(cell1.x(), cell1.y(), cell2.x(), cell2.y());
     }
 
@@ -188,28 +222,32 @@ impl Grid {
     }
 
     pub fn visit<F>(&mut self, mut f: F)
-        where F: FnMut(&mut Grid, &Cell)
+        where F: FnMut(&mut Grid<T>, &T)
     {
         let mut grid = self;
         for x in 0..grid.x {
             for y in 0..grid.y {
-                let cell = grid[x][y];
+                let cell = grid[x][y].clone();
                 f(grid, &cell);
             }
         }
     }
 }
 
-impl Index<usize> for Grid {
-    type Output = Vec<Cell>;
+impl <T> Index<usize> for Grid<T>
+    where T: Cell
+{
+    type Output = Vec<T>;
 
-    fn index<'a>(&'a self, index: usize) -> &'a Vec<Cell> {
+    fn index<'a>(&'a self, index: usize) -> &'a Vec<T> {
         &self.cells[index]
     }
 }
 
-impl IndexMut<usize> for Grid {
-    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut Vec<Cell> {
+impl <T> IndexMut<usize> for Grid<T>
+    where T: Cell
+{
+    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut Vec<T> {
         &mut self.cells[index]
     }
 }
