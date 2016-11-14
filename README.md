@@ -41,7 +41,7 @@ OPTIONS:
 
 ## Generator Algoritms
 
-- [x] Aldous-Broder
+- [x] [Aldous-Broder](http://weblog.jamisbuck.org/2011/1/17/maze-generation-aldous-broder-algorithm)
 - [x] Binary
 - [x] Sidewinder
 
