@@ -43,7 +43,7 @@ OPTIONS:
 
 - [x] [Aldous-Broder](http://weblog.jamisbuck.org/2011/1/17/maze-generation-aldous-broder-algorithm)
 - [x] Binary
-- [x] Sidewinder
+- [x] [Sidewinder](http://weblog.jamisbuck.org/2011/2/3/maze-generation-sidewinder-algorithm)
 
 ## Output Formats
 
