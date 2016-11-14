@@ -12,8 +12,8 @@ Maze for Programmers (Rust)
 ## Usage
 
 ```
-$ ./target/release/maze -h
-Maze Generator 0.1.0
+$ ./target/debug/maze -h
+Maze Generator 0.1.2
 Tomas Korcak <korczis@gmail.com>
 
 USAGE:
@@ -26,11 +26,17 @@ FLAGS:
     -v, --verbose    Verbose mode
 
 OPTIONS:
-    -a, --algorithm <algorithm>    Algorithm to use [default: aldous-broder]  [values: aldous-broder, binary, sidewinder]
-    -f, --format <format>          Output format to use [default: ascii]  [values: ascii, json]
-    -y, --height <height>          Height of Maze [default: 5]
-    -p, --rest-port <rest-port>    REST Port [default: 5000]
-    -x, --width <width>            Width of Maze [default: 5]
+    -a, --algorithm <algorithm>      Algorithm to use [default: aldous-broder]  [values:
+                                     aldous-broder, binary, sidewinder]
+    -c, --cell-size <cell-size>      Size of Cell [default: 80]
+        --color-cell <color-cell>    Color of Cell [default: #fff]
+        --color-wall <color-wall>    Color of Wall [default: #000]
+    -f, --format <format>            Output format to use [default: ascii]  [values: ascii, json,
+                                     png]
+    -y, --height <height>            Height of Maze [default: 5]
+    -p, --rest-port <rest-port>      REST Port [default: 5000]
+    -w, --wall-size <wall-size>      Size of Wall [default: 20]
+    -x, --width <width>              Width of Maze [default: 5]
 ```
 
 ## Generator Algoritms
