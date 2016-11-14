@@ -8,7 +8,7 @@ use imageproc::drawing::draw_filled_rect_mut;
 use super::super::types::cell::Cell;
 use super::super::types::grid::Grid;
 
-pub fn format<T>(grid: &Grid<T>, cell_size: u32, wall_size: u32, output_filename: &'static str)
+pub fn format<T>(grid: &Grid<T>, cell_size: u32, wall_size: u32, color_cell: &[u8; 3], color_wall: &[u8; 3], output_filename: &'static str)
     where T: Cell + Clone
 {
     let img_x = (grid.x() as u32 * cell_size) + (grid.x() as u32 + 1) * wall_size;
@@ -17,8 +17,8 @@ pub fn format<T>(grid: &Grid<T>, cell_size: u32, wall_size: u32, output_filename
     info!("Generating {:?}, size: {}x{} px", output_filename, img_x, img_y);
     let mut img = RgbImage::new(img_x, img_y);
 
-    let background_color = Rgb([255, 255, 255]);
-    let wall_color = Rgb([0, 0, 0]);
+    let background_color = Rgb(*color_cell);
+    let wall_color = Rgb(*color_wall);
 
     draw_filled_rect_mut(&mut img, Rect::at(0, 0).of_size(img_x, img_y), background_color);
 

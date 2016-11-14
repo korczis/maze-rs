@@ -150,8 +150,8 @@ impl <T> Grid<T>
         output::json::format(self)
     }
 
-    pub fn to_png(&self, cell_size: u32, wall_size: u32, output_filename: &'static str) {
-        output::png::format(self, cell_size, wall_size, output_filename)
+    pub fn to_png(&self, cell_size: u32, wall_size: u32, color_cell: &[u8; 3], color_wall: &[u8; 3], output_filename: &'static str) {
+        output::png::format(self, cell_size, wall_size, color_cell, color_wall, output_filename)
     }
 
     pub fn to_string(&self) -> String {

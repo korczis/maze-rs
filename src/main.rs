@@ -3,11 +3,13 @@ extern crate log;
 extern crate env_logger;
 
 extern crate clap;
+extern crate css_color_parser;
 extern crate maze;
 extern crate serde_json;
 extern crate time;
 
 use clap::{App, Arg};
+use css_color_parser::Color as CssColor;
 use maze::types::cell::BaseCell;
 use maze::types::grid::Grid;
 use maze::web;
@@ -20,9 +22,13 @@ const AUTHOR: &'static str = "Tomas Korcak <korczis@gmail.com>";
 const DESCRIPTION: &'static str = "Maze Generator";
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
+const DEFAULT_CELL_SIZE: u32 = 80;
+const DEFAULT_WALL_SIZE: u32 = 20;
 const DEFAULT_HEIGHT: usize = 5;
 const DEFAULT_WIDTH: usize = 5;
 const DEFAULT_PORT: u16 = 5000;
+const DEFAULT_COLOR_CELL: [u8; 3] = [255, 255, 255];
+const DEFAULT_COLOR_WALL: [u8; 3] = [0, 0, 0];
 
 enum Algorithm {
     AldousBroder,
@@ -63,6 +69,8 @@ impl FromStr for Format {
 }
 
 fn main() {
+    let default_cell_size = &DEFAULT_CELL_SIZE.to_string()[..];
+    let default_wall_size = &DEFAULT_WALL_SIZE.to_string()[..];
     let default_height = &DEFAULT_HEIGHT.to_string()[..];
     let default_width = &DEFAULT_WIDTH.to_string()[..];
     let default_port = &DEFAULT_PORT.to_string()[..];
@@ -76,6 +84,28 @@ fn main() {
             .long("algorithm")
             .possible_values(&["aldous-broder", "binary", "sidewinder"])
             .default_value("aldous-broder")
+        )
+        .arg(Arg::with_name("cell-size")
+            .help("Size of Cell")
+            .short("c")
+            .long("cell-size")
+            .default_value(default_cell_size)
+        )
+        .arg(Arg::with_name("color-cell")
+            .help("Color of Cell")
+            .long("color-cell")
+            .default_value("#fff")
+        )
+        .arg(Arg::with_name("color-wall")
+            .help("Color of Wall")
+            .long("color-wall")
+            .default_value("#000")
+        )
+        .arg(Arg::with_name("wall-size")
+            .help("Size of Wall")
+            .short("w")
+            .long("wall-size")
+            .default_value(default_wall_size)
         )
         .arg(Arg::with_name("format")
             .help("Output format to use")
@@ -144,6 +174,26 @@ fn main() {
         _ => DEFAULT_WIDTH
     };
 
+    let cell_size = match matches.value_of("cell-size").unwrap().to_string().parse::<u32>() {
+        Ok(val) => val,
+        _ => DEFAULT_CELL_SIZE
+    };
+
+    let wall_size = match matches.value_of("wall-size").unwrap().to_string().parse::<u32>() {
+        Ok(val) => val,
+        _ => DEFAULT_WALL_SIZE
+    };
+
+    let color_cell = match matches.value_of("color-cell").unwrap().parse::<CssColor>() {
+        Ok(val) => [val.r, val.g, val.b],
+        _ => DEFAULT_COLOR_CELL
+    };
+
+    let color_wall = match matches.value_of("color-wall").unwrap().parse::<CssColor>() {
+        Ok(val) => [val.r, val.g, val.b],
+        _ => DEFAULT_COLOR_WALL
+    };
+
     let algorithm = Algorithm::from_str(matches.value_of("algorithm").unwrap());
 
     let mut grid: Grid<BaseCell> = Grid::new(width, height);
@@ -176,7 +226,7 @@ fn main() {
         Ok(Format::Png) => {
             let output_filename = "output.png";
             info!("Writing maze to {:?}", output_filename);
-            grid.to_png(80, 20, output_filename);
+            grid.to_png(cell_size, wall_size, &color_cell, &color_wall, output_filename);
         },
         Err(_) => {
             println!("Invalid format specified");

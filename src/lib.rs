@@ -7,6 +7,7 @@ extern crate serde_derive;
 #[macro_use]
 extern crate log;
 
+extern crate css_color_parser;
 extern crate hyper;
 extern crate image;
 extern crate imageproc;
