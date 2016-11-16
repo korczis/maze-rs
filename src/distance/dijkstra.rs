@@ -22,7 +22,7 @@ impl Cell for DistanceCell {
     fn to_string(&self) -> String {
         match self.distance {
             Some(d) => {
-                format!(" {} ", d)
+                format!(" {} ", d % 10)
             },
             _ => EMPTY_CELL.to_string()
         }
