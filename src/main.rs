@@ -10,6 +10,8 @@ extern crate time;
 
 use clap::{App, Arg};
 use css_color_parser::Color as CssColor;
+
+use maze::distance;
 use maze::types::cell::BaseCell;
 use maze::types::grid::Grid;
 use maze::web;
@@ -222,9 +224,6 @@ fn main() {
         }
     }
 
-    // grid.print_ascii();
-    // debug!("{:?}", grid);
-
     let format = Format::from_str(matches.value_of("format").unwrap());
     match format {
         Ok(Format::Ascii) => grid.print_ascii(),
@@ -239,4 +238,7 @@ fn main() {
             exit(1);
         }
     }
+
+    let distances = distance::dijkstra::calculate(&grid);
+    distances.print_ascii();
 }

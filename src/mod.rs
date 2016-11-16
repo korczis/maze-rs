@@ -1,3 +1,4 @@
+pub mod distance;
 pub mod generator;
 pub mod output;
 pub mod types;
