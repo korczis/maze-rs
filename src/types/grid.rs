@@ -63,6 +63,10 @@ impl <T> Grid<T>
         generator::sidewinder::generate(self)
     }
 
+    pub fn generate_wilson(&mut self) {
+        generator::wilson::generate(self)
+    }
+
     pub fn is_linked_indices(&self, x1: usize, y1: usize, x2: usize, y2: usize) -> bool {
         match self.links.get(&(x1, y1)) {
             Some(set) => {

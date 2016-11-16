@@ -5,6 +5,9 @@ use image::{Rgb, RgbImage};
 use imageproc::rect::Rect;
 use imageproc::drawing::draw_filled_rect_mut;
 
+// use rand;
+// use rand::distributions::{Sample, Range};
+
 use super::super::types::cell::Cell;
 use super::super::types::grid::Grid;
 
@@ -28,11 +31,28 @@ pub fn format<T>(grid: &Grid<T>, cell_size: u32, wall_size: u32, color_cell: &[u
     // Left
     draw_filled_rect_mut(&mut img, Rect::at(0, 0).of_size(wall_size, (img_y - wall_size) as u32), wall_color);
 
+    // let mut between = Range::new(0, 255);
+    // let mut rng = rand::thread_rng();
+
     // Cells
     for x in 0..grid.x() {
         for y in 0..grid.y() {
             let cell = &grid[x][y];
 
+            // Cell background
+            /*
+            let cell_color = Rgb([
+                between.sample(&mut rng),
+                between.sample(&mut rng),
+                between.sample(&mut rng)
+            ]);
+
+            let start_x = x as i32 * cell_size as i32 + (x + 1) as i32 * wall_size as i32;
+            let start_y = y as i32 * cell_size as i32 + (y + 1) as i32 * wall_size as i32;
+            draw_filled_rect_mut(&mut img, Rect::at(start_x, start_y).of_size(cell_size + wall_size, cell_size + wall_size), cell_color);
+            */
+
+            // Right - Vertical
             let right = grid.is_linked_indices(cell.x(), cell.y(), cell.x() + 1, cell.y());
             if !right {
                 let start_x = (x + 1) as i32 * cell_size as i32 + (x + 1) as i32 * wall_size as i32;
@@ -43,6 +63,7 @@ pub fn format<T>(grid: &Grid<T>, cell_size: u32, wall_size: u32, color_cell: &[u
                 draw_filled_rect_mut(&mut img, Rect::at(start_x, start_y).of_size(size_x, size_y), wall_color);
             }
 
+            // Bottom - Horizontal
             let bottom = grid.is_linked_indices(cell.x(), cell.y(), cell.x(), cell.y() + 1);
             if !bottom {
                 let start_x = x as i32 * cell_size as i32 + x as i32 * wall_size as i32;

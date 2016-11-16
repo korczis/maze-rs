@@ -33,7 +33,8 @@ const DEFAULT_COLOR_WALL: [u8; 3] = [0, 0, 0];
 enum Algorithm {
     AldousBroder,
     Binary,
-    Sidewinder
+    Sidewinder,
+    Wilson
 }
 
 impl FromStr for Algorithm {
@@ -44,6 +45,7 @@ impl FromStr for Algorithm {
             "aldous-broder" => Ok(Algorithm::AldousBroder),
             "binary" => Ok(Algorithm::Binary),
             "sidewinder" => Ok(Algorithm::Sidewinder),
+            "wilson" => Ok(Algorithm::Wilson),
             _ => Err("no match")
         }
     }
@@ -82,7 +84,7 @@ fn main() {
             .help("Algorithm to use")
             .short("a")
             .long("algorithm")
-            .possible_values(&["aldous-broder", "binary", "sidewinder"])
+            .possible_values(&["aldous-broder", "binary", "sidewinder", "wilson"])
             .default_value("aldous-broder")
         )
         .arg(Arg::with_name("cell-size")
@@ -210,14 +212,18 @@ fn main() {
             info!("Generating maze using Sidewinder algorithm");
             grid.generate_sidewinder()
         },
+        Ok(Algorithm::Wilson) => {
+            info!("Generating maze using Wilson's algorithm");
+            grid.generate_wilson()
+        },
         Err(_) => {
             info!("Invalid algorithm specified");
             exit(1);
         }
     }
 
-    grid.print_ascii();
-    debug!("{:?}", grid);
+    // grid.print_ascii();
+    // debug!("{:?}", grid);
 
     let format = Format::from_str(matches.value_of("format").unwrap());
     match format {

@@ -13,12 +13,18 @@ pub fn format<T>(grid: &Grid<T>) -> String
 
     for (k, set) in grid.links.iter() {
         for v in set.iter() {
-            let mut tuple: Vec<serde_json::value::Value> = Vec::new();
-            tuple.push(serde_json::value::Value::U64(k.0 as u64));
-            tuple.push(serde_json::value::Value::U64(k.1 as u64));
+            let mut first: Vec<serde_json::value::Value> = Vec::new();
+            first.push(serde_json::value::Value::U64(k.0 as u64));
+            first.push(serde_json::value::Value::U64(k.1 as u64));
 
-            tuple.push(serde_json::value::Value::U64(v.0 as u64));
-            tuple.push(serde_json::value::Value::U64(v.1 as u64));
+            let mut second: Vec<serde_json::value::Value> = Vec::new();
+            second.push(serde_json::value::Value::U64(v.0 as u64));
+            second.push(serde_json::value::Value::U64(v.1 as u64));
+
+            let mut tuple: Vec<serde_json::value::Value> = Vec::new();
+            tuple.push(serde_json::value::Value::Array(first));
+            tuple.push(serde_json::value::Value::Array(second));
+
             links.push(serde_json::value::Value::Array(tuple));
         }
     }
