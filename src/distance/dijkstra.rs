@@ -61,35 +61,48 @@ pub fn calculate<T>(grid: &Grid<T>) -> Grid<DistanceCell>
         for f in frontier {
             let f_distance = f.distance.unwrap();
 
-           for n in grid.neighbors_indices(f.x(), f.y()) {
-                match distance_grid[n.x()][n.y()].distance {
+           for neighbor in grid.neighbors_indices(f.x(), f.y()) {
+                match distance_grid[neighbor.x()][neighbor.y()].distance() {
                     Some(_d) => {},
                     _ => {
-                        if distance_grid.is_linked_indices(f.x(), f.y(), n.x(), n.y()) {
-                            distance_grid[n.x()][n.y()].distance = Some(f_distance + 1);
-                            new_frontier.push(distance_grid[n.x()][n.y()]);
+                        if distance_grid.is_linked_indices(f.x(), f.y(), neighbor.x(), neighbor.y()) {
+                            distance_grid[neighbor.x()][neighbor.y()].distance = Some(f_distance + 1);
+                            new_frontier.push(distance_grid[neighbor.x()][neighbor.y()]);
                         }
                     }
                 }
             }
         }
 
-        /*
-        let len = frontier.len();
-        let mut item = frontier[len - 1];
-
-        item.distance = Some(new_distance);
-
-        // Trunctate the frontier
-        frontier.truncate(len - 1);
-
-        // Set distance
-        distance_grid[item.x()][item.y()].distance = item.distance;
-        */
-
         // Set frontier
         frontier = new_frontier;
     }
 
     return distance_grid;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::super::super::types::cell::*;
+    use super::super::super::distance;
+    use super::super::super::types::grid::Grid;
+    use test::Bencher;
+
+    #[bench]
+    fn bench_calculate_10x10(b: &mut Bencher) {
+        b.iter(|| {
+            let mut grid: Grid<BaseCell> = Grid::new(10, 10);
+            grid.generate_aldous_broder();
+            let _ = distance::dijkstra::calculate(&grid);
+        });
+    }
+
+    #[bench]
+    fn bench_calculate_100x100(b: &mut Bencher) {
+        b.iter(|| {
+            let mut grid: Grid<BaseCell> = Grid::new(100, 100);
+            grid.generate_aldous_broder();
+            let _ = distance::dijkstra::calculate(&grid);
+        });
+    }
 }

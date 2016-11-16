@@ -141,6 +141,11 @@ fn main() {
             .short("r")
             .long("rest")
         )
+        .arg(Arg::with_name("solution")
+            .help("Show solution")
+            .short("s")
+            .long("solution")
+        )
         .arg(Arg::with_name("rest-port")
             .help("REST Port")
             .short("p")
@@ -239,6 +244,11 @@ fn main() {
         }
     }
 
-    let distances = distance::dijkstra::calculate(&grid);
-    distances.print_ascii();
+    match matches.occurrences_of("solution") {
+        0 => {},
+        _ => {
+            let distances = distance::dijkstra::calculate(&grid);
+            distances.print_ascii();
+        }
+    }
 }
