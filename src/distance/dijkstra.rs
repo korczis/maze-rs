@@ -1,3 +1,5 @@
+use ansi_term::Colour::Green;
+
 use super::super::types::cell::Cell;
 use super::super::types::grid::Grid;
 
@@ -37,7 +39,7 @@ impl Cell for DistanceCell {
         match self.distance {
             Some(d) => {
                 if self.is_path {
-                    format!(" {} ", ASCII_LOWER[d % 62])
+                    Green.paint(format!(" {} ", ASCII_LOWER[d % 62])).to_string()
                 } else {
                     EMPTY_CELL.to_string()
                 }

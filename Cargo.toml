@@ -9,6 +9,7 @@ keywords = ["maze", "labyrinth", "maze-generator", "labyrinth-generator", "fun"]
 license = "MIT"
 
 [dependencies]
+ansi_term = "0.9.0"
 clap = "2.18.0"
 css-color-parser = "0.1.1"
 env_logger = "0.3.5"
