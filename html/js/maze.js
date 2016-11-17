@@ -4,7 +4,7 @@ function canvasInit(id) {
     console.log("Initializing Canvas");
 
     var cellSize = 20;
-    var wallSize = 2;
+    var wallSize = 10;
 
     var canvas = document.getElementById(id);
     var width = maze.x * cellSize + (maze.x + 1) * wallSize;
@@ -34,12 +34,12 @@ function canvasInit(id) {
     ctx.lineWidth = wallSize;
 
     // Top
-    ctx.moveTo(1, 1);
-    ctx.lineTo(width - 1, 1);
+    ctx.moveTo(0, wallSize / 2);
+    ctx.lineTo(width, wallSize / 2);
 
     // Left
-    ctx.moveTo(1, 0);
-    ctx.lineTo(1, height - 1);
+    ctx.moveTo(wallSize / 2, 0);
+    ctx.lineTo(wallSize / 2, height);
 
     for (var x = 0; x < maze.x; x++) {
         for (var y = 0; y < maze.y; y++) {
@@ -49,20 +49,20 @@ function canvasInit(id) {
             console.log(x, y, linkedRight, linkedBottom);
 
             if (!linkedRight) {
-                var startX = (wallSize * (x + 1)) + (cellSize * (x + 1)) + 1;
+                var startX = (wallSize * (x + 1)) + (cellSize * (x + 1)) + wallSize / 2;
                 var startY = (wallSize * y) + (cellSize * y);
 
                 ctx.moveTo(startX, startY);
-                ctx.lineTo(startX, startY + cellSize + wallSize + 1);
+                ctx.lineTo(startX, startY + cellSize + wallSize * 2);
                 ctx.stroke();
             }
 
             if (!linkedBottom) {
-                var startX = 1 + wallSize * x + cellSize * x;
-                var startY = cellSize * (y + 1) + wallSize * (y + 1);
+                var startX = wallSize * x + cellSize * x;
+                var startY = cellSize * (y + 1) + wallSize * (y + 1) + wallSize / 2;
 
                 ctx.moveTo(startX, startY);
-                ctx.lineTo(startX + cellSize + wallSize + 1, startY);
+                ctx.lineTo(startX + cellSize + wallSize + (wallSize), startY);
                 ctx.stroke();
             }
         }
