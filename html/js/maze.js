@@ -17,7 +17,7 @@ function canvasInit(id) {
 
     d = d - (d % cellWallRatio);
 
-    var cellSize = d;
+    var cellSize = Math.max(d, cellWallRatio);
     var wallSize = cellSize / cellWallRatio;
 
     console.log("Cell Size", cellSize);
