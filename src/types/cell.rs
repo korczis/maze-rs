@@ -5,7 +5,6 @@ pub trait Cell {
     fn to_string(&self) -> String;
     fn x(&self) -> usize;
     fn y(&self) -> usize;
-    // fn clone(&self) -> Self;
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]

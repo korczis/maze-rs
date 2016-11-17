@@ -1,6 +1,6 @@
 [package]
 name = "maze"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Tomas Korcak <korczis@gmail.com>"]
 description = "Maze Generator"
 repository = "https://github.com/korczis/maze-rs"

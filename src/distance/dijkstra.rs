@@ -1,4 +1,5 @@
-use ansi_term::Colour::Green;
+use ansi_term::Colour::{Green, Black};
+use ansi_term::Style;
 
 use super::super::types::cell::Cell;
 use super::super::types::grid::Grid;
@@ -15,7 +16,7 @@ static ASCII_LOWER: [char; 62] = [
 'Y', 'Z'
 ];
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy)]
 pub struct DistanceCell {
     x: usize,
     y: usize,
@@ -39,7 +40,8 @@ impl Cell for DistanceCell {
         match self.distance {
             Some(d) => {
                 if self.is_path {
-                    Green.paint(format!(" {} ", ASCII_LOWER[d % 62])).to_string()
+                    Style::new().on(Green).fg(Black).paint(format!(" {} ", ASCII_LOWER[d % 62])).to_string()
+                    // Green.paint(format!(" {} ", ASCII_LOWER[d % 62])).to_string()
                 } else {
                     EMPTY_CELL.to_string()
                 }
@@ -132,7 +134,7 @@ mod tests {
         b.iter(|| {
             let mut grid: Grid<BaseCell> = Grid::new(10, 10);
             grid.generate_aldous_broder();
-            let _ = distance::dijkstra::calculate(&grid);
+            let _ = distance::dijkstra::calculate(&grid, (0, 0), (grid.x() - 1, grid.y() - 1));
         });
     }
 
@@ -141,7 +143,7 @@ mod tests {
         b.iter(|| {
             let mut grid: Grid<BaseCell> = Grid::new(100, 100);
             grid.generate_aldous_broder();
-            let _ = distance::dijkstra::calculate(&grid);
+            let _ = distance::dijkstra::calculate(&grid, (0, 0), (grid.x() - 1, grid.y() - 1));
         });
     }
 }
