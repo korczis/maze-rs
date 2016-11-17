@@ -10,9 +10,9 @@ use super::cell::Cell;
 use super::super::generator;
 use super::super::output;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Grid<T>
-    where T: Cell
+    where T: Cell + Clone
 {
     x: usize,
     y: usize,
@@ -135,6 +135,32 @@ impl <T> Grid<T>
         return res;
     }
 
+    pub fn neighbors_linked(&self, cell: &T) -> Vec<T> {
+        self.neighbors_linked_indices(cell.x(), cell.y())
+    }
+
+    pub fn neighbors_linked_indices(&self, x: usize, y: usize) -> Vec<T> {
+        let mut res = Vec::new();
+
+        if x > 0 && self.is_linked_indices(x, y, x - 1, y) {
+            res.push(self.cells[x - 1][y].clone());
+        }
+
+        if x < self.x - 1 && self.is_linked_indices(x, y, x + 1, y) {
+            res.push(self.cells[x + 1][y].clone());
+        }
+
+        if y > 0 && self.is_linked_indices(x, y, x, y - 1) {
+            res.push(self.cells[x][y - 1].clone());
+        }
+
+        if y < self.y - 1 && self.is_linked_indices(x, y, x, y + 1){
+            res.push(self.cells[x][y + 1].clone());
+        }
+
+        return res;
+    }
+
     pub fn random_cell(&self) -> T {
         let between_x = Range::new(0, self.x);
         let between_y = Range::new(0, self.y);
@@ -211,7 +237,7 @@ impl <T> Grid<T>
 }
 
 impl <T> Index<usize> for Grid<T>
-    where T: Cell
+    where T: Cell + Clone
 {
     type Output = Vec<T>;
 
@@ -221,7 +247,7 @@ impl <T> Index<usize> for Grid<T>
 }
 
 impl <T> IndexMut<usize> for Grid<T>
-    where T: Cell
+    where T: Cell + Clone + Copy
 {
     fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut Vec<T> {
         &mut self.cells[index]

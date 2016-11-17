@@ -247,8 +247,18 @@ fn main() {
     match matches.occurrences_of("solution") {
         0 => {},
         _ => {
-            let distances = distance::dijkstra::calculate(&grid);
+            println!("Solution");
+            let distances = distance::dijkstra::calculate(&grid, (0, 0), (grid.x() -1 , grid.y() - 1));
             distances.print_ascii();
+            let len = distances[distances.x() - 1][distances.y() - 1].distance().unwrap();
+
+            println!("Solution (Reversed)");
+            let distances = distance::dijkstra::calculate(&grid, (grid.x() -1 , grid.y() - 1), (0, 0));
+            distances.print_ascii();
+
+            info!("Shortest path is {} steps long.", len);
+
+            // info!("Let see paths {} steps long", len / 2);
         }
     }
 }

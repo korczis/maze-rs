@@ -5,13 +5,13 @@ pub trait Cell {
     fn to_string(&self) -> String;
     fn x(&self) -> usize;
     fn y(&self) -> usize;
+    // fn clone(&self) -> Self;
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct BaseCell {
     x: usize,
-    y: usize,
-    // links: HashMap<(usize, usize, usize, usize), bool>
+    y: usize
 }
 
 const EMPTY_CELL: &'static str = "   ";
