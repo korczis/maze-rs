@@ -83,7 +83,8 @@ pub fn calculate<T>(grid: &Grid<T>, begin: (usize, usize), end: (usize, usize)) 
         for f in frontier {
             let f_distance = f.distance.unwrap();
 
-           for neighbor in grid.neighbors_linked_indices(f.x(), f.y()) {
+            // Traverse linked neighbors and find closest one
+            for neighbor in grid.neighbors_linked_indices(f.x(), f.y()) {
                 match distance_grid[neighbor.x()][neighbor.y()].distance() {
                     Some(_d) => {},
                     _ => {
@@ -97,6 +98,9 @@ pub fn calculate<T>(grid: &Grid<T>, begin: (usize, usize), end: (usize, usize)) 
         // Set frontier
         frontier = new_frontier;
     }
+
+    // TODO: Store Path Incrementaly Here
+    let _path: Vec<(usize, usize)> = Vec::new();
 
     let mut current = Some(distance_grid[end.0][end.1]);
     distance_grid[end.0][end.1].is_path = true;
