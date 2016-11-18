@@ -9,7 +9,7 @@ function canvasInit(id) {
     console.log("Maze Size", maze.x, maze.y);
     console.log("Client Size", docWidth, docHeight);
 
-    var cellWallRatio = 4;
+    var cellWallRatio = 2;
 
     var dx = docWidth / (maze.x + ((maze.x + 1)/ cellWallRatio));
     var dy = docHeight / (maze.y + ((maze.y + 1) / cellWallRatio));
@@ -46,6 +46,8 @@ function canvasInit(id) {
     }
 
     console.log(links);
+
+    var renderStart = performance.now();
 
     ctx.strokeStyle = "black";
     ctx.lineWidth = wallSize;
@@ -84,4 +86,7 @@ function canvasInit(id) {
             }
         }
     }
+
+    var renderEnd = performance.now();
+    console.log("Render took " + ((renderEnd - renderStart) / 1000).toFixed(2) + " seconds.");
 };

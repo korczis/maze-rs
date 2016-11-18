@@ -1,4 +1,4 @@
-use ansi_term::Colour::{Green, Black};
+use ansi_term::Colour::{Black, Green, Red};
 use ansi_term::Style;
 
 use super::super::types::cell::Cell;
@@ -43,7 +43,8 @@ impl Cell for DistanceCell {
                     Style::new().on(Green).fg(Black).paint(format!(" {} ", ASCII_LOWER[d % 62])).to_string()
                     // Green.paint(format!(" {} ", ASCII_LOWER[d % 62])).to_string()
                 } else {
-                    EMPTY_CELL.to_string()
+                    Style::new().on(Red).fg(Black).paint(format!(" {} ", ASCII_LOWER[d % 62])).to_string()
+                    // EMPTY_CELL.to_string()
                 }
             },
             _ => EMPTY_CELL.to_string()
