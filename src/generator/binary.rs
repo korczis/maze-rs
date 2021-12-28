@@ -1,7 +1,6 @@
 extern crate rand;
 
-use rand::Rng;
-
+use rand::seq::SliceRandom;
 use super::super::types::cell::Cell;
 use super::super::types::grid::Grid;
 
@@ -20,7 +19,7 @@ pub fn generate<T>(grid: &mut Grid<T>)
         }
 
         if cells.len() > 0 {
-            grid.link(cell, rand::thread_rng().choose(&cells).unwrap());
+            grid.link(cell, cells.choose(&mut rand::thread_rng()).unwrap());
         }
     });
 }

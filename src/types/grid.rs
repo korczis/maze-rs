@@ -1,10 +1,9 @@
 extern crate rand;
 
+use rand::distributions::{Distribution, Uniform};
 use std::collections::BTreeSet;
 use std::collections::HashMap;
 use std::ops::{Index, IndexMut};
-
-use rand::distributions::{IndependentSample, Range};
 
 use super::cell::Cell;
 use super::super::generator;
@@ -25,8 +24,8 @@ impl <T> Grid<T>
 {
     pub fn new(x: usize, y: usize) -> Grid<T> {
         let mut grid = Grid {
-            x: x,
-            y: y,
+            x,
+            y,
             cells: Vec::with_capacity(x),
             links: HashMap::new()
         };
@@ -162,12 +161,12 @@ impl <T> Grid<T>
     }
 
     pub fn random_cell(&self) -> T {
-        let between_x = Range::new(0, self.x);
-        let between_y = Range::new(0, self.y);
+        let between_x = Uniform::from(0..self.x);
+        let between_y = Uniform::from(0..self.y);
         let mut rng = rand::thread_rng();
 
-        let x = between_x.ind_sample(&mut rng);
-        let y = between_y.ind_sample(&mut rng);
+        let x = between_x.sample(&mut rng);
+        let y = between_y.sample(&mut rng);
 
         self.cells[x][y].clone()
     }
@@ -218,7 +217,7 @@ impl <T> Grid<T>
     pub fn visit<F>(&mut self, mut f: F)
         where F: FnMut(&mut Grid<T>, &T)
     {
-        let mut grid = self;
+        let grid = self;
         for x in 0..grid.x {
             for y in 0..grid.y {
                 let cell = grid[x][y].clone();
