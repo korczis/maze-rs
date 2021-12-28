@@ -1,8 +1,6 @@
 extern crate rand;
 
-use rand::Rng;
-// use std::collections::BTreeSet;
-
+use rand::seq::SliceRandom;
 use super::super::types::cell::Cell;
 use super::super::types::grid::Grid;
 
@@ -16,12 +14,13 @@ pub fn generate<T>(grid: &mut Grid<T>)
         }
     }
 
-    let first = rand::thread_rng().choose(&unvisited).unwrap().clone();
+    ;
+    let first = unvisited.choose(&mut rand::thread_rng()).unwrap().clone();
     unvisited.retain(|&x| x != first);
     println!("Starting cell: {:?}", first);
 
     while unvisited.len() > 0 {
-        let mut cell: (usize, usize) = rand::thread_rng().choose(&unvisited).unwrap().clone();
+        let mut cell: (usize, usize) = unvisited.choose(&mut rand::thread_rng()).unwrap().clone();
         let mut path: Vec<(usize, usize)> = Vec::new();
 
         println!("Adding {:?}", cell);
@@ -30,7 +29,7 @@ pub fn generate<T>(grid: &mut Grid<T>)
         while unvisited.contains(&cell) {
             let neighbors = grid.neighbors_indices(cell.0, cell.1);
 
-            let r = rand::thread_rng().choose(&neighbors).unwrap();
+            let r = neighbors.choose(&mut rand::thread_rng()).unwrap();
             cell = (r.x(), r.y());
 
             println!("Looking for: {:?}", cell);
@@ -48,8 +47,6 @@ pub fn generate<T>(grid: &mut Grid<T>)
 
         println!("Unvisited does not contains: {:?}", cell);
         println!("Path: {:?}", path);
-
-        // return;
 
         // println!("{:?}", path.len());
         let len = path.len() - 2;
