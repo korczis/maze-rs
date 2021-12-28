@@ -183,6 +183,10 @@ impl <T> Grid<T>
         output::png::format(self, cell_size, wall_size, color_cell, color_wall, output_filename)
     }
 
+    pub fn to_svg(&self, cell_size: u32, wall_size: u32, color_cell: &[u8; 3], color_wall: &[u8; 3], output_filename: &'static str) {
+        output::svg::format(self, cell_size, wall_size, color_cell, color_wall, output_filename)
+    }
+
     pub fn to_string(&self) -> String {
         output::ascii::format(self)
     }
