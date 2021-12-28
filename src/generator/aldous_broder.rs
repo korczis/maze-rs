@@ -1,7 +1,6 @@
 extern crate rand;
 
-use rand::Rng;
-
+use rand::seq::SliceRandom;
 use super::super::types::cell::Cell;
 use super::super::types::grid::Grid;
 
@@ -13,7 +12,7 @@ pub fn generate<T>(grid: &mut Grid<T>)
 
     while unvisited > 0 {
         let neighbors = grid.neighbors(&cell);
-        let neighbor = rand::thread_rng().choose(&neighbors).unwrap();
+        let neighbor = neighbors.choose(&mut rand::thread_rng()).unwrap();
 
         if !grid.links.contains_key(&(neighbor.x(), neighbor.y())) {
             grid.link(&cell, &neighbor);

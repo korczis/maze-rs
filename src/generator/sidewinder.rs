@@ -2,6 +2,7 @@ extern crate rand;
 
 use rand::Rng;
 
+use rand::seq::SliceRandom;
 use super::super::types::cell::Cell;
 use super::super::types::grid::Grid;
 
@@ -20,7 +21,7 @@ pub fn generate<T>(grid: &mut Grid<T>)
 
             let mut should_clear = false;
             if should_close_out {
-                let member = rand::thread_rng().choose(&cells).unwrap();
+                let member = cells.choose(&mut rand::thread_rng()).unwrap();
                 if y < (grid.y() - 1) {
                     grid.link_indices(member.x(), member.y(), member.x(), member.y() + 1);
                 }

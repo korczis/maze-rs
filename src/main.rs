@@ -56,7 +56,8 @@ impl FromStr for Algorithm {
 enum Format {
     Ascii,
     Json,
-    Png
+    Png,
+    Svg
 }
 
 impl FromStr for Format {
@@ -67,6 +68,7 @@ impl FromStr for Format {
             "ascii" => Ok(Format::Ascii),
             "json" => Ok(Format::Json),
             "png" => Ok(Format::Png),
+            "svg" => Ok(Format::Svg),
             _ => Err("no match")
         }
     }
@@ -115,7 +117,7 @@ fn main() {
             .help("Output format to use")
             .short("f")
             .long("format")
-            .possible_values(&["ascii", "json", "png"])
+            .possible_values(&["ascii", "json", "png", "svg"])
             .default_value("ascii")
         )
         .arg(Arg::with_name("height")
@@ -161,7 +163,7 @@ fn main() {
         _ => {}
     }
 
-    env_logger::init().unwrap();
+    env_logger::init();
 
     let port: u16 = match matches.value_of("rest-port").unwrap().to_string().parse::<u16>() {
         Ok(val) => val,
@@ -237,6 +239,11 @@ fn main() {
             let output_filename = "output.png";
             info!("Writing maze to {:?}", output_filename);
             grid.to_png(cell_size, wall_size, &color_cell, &color_wall, output_filename);
+        },
+        Ok(Format::Svg) => {
+            let output_filename = "output.svg";
+            info!("Writing maze to {:?}", output_filename);
+            grid.to_svg(cell_size, wall_size, &color_cell, &color_wall, output_filename);
         },
         Err(_) => {
             println!("Invalid format specified");
