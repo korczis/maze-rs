@@ -3,11 +3,11 @@ extern crate router;
 extern crate time;
 extern crate urlencoded;
 
-use hyper::header::Headers;
+use time::Instant;
 use iron::prelude::*;
 use iron::status;
+use iron::Headers;
 use router::Router;
-use time::PreciseTime;
 use urlencoded::UrlEncodedQuery;
 
 use super::types::cell::BaseCell;
@@ -49,7 +49,7 @@ pub fn start_web<'a>(port: u16) {
 
         let mut res = String::new();
 
-        let start = PreciseTime::now();
+        let start = Instant::now();
         for _ in 0..count {
             let mut grid: Grid<BaseCell> = Grid::new(width, height);
             grid.generate_aldous_broder();
@@ -57,15 +57,16 @@ pub fn start_web<'a>(port: u16) {
             res += &grid.to_string()[..];
             res += "\n";
         }
-        let end = PreciseTime::now();
+        let end = Instant::now();
 
         let mut headers = Headers::new();
-        let diff = start.to(end);
-        let diff_string = format!("{}", diff.num_seconds() as f32 + diff.num_milliseconds() as f32 * 0.001 + diff.num_microseconds().unwrap() as f32 * 1e-6);
+        let diff = end - start;
+        let diff_string = format!("{}", diff.as_seconds_f32());
         headers.set_raw("x-time-sec", vec![diff_string.into_bytes()]);
 
         let mut response = Response::with((status::Ok, res));
         response.headers = headers;
+
         Ok(response)
     }, "get");
 
