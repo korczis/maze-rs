@@ -161,7 +161,7 @@ fn main() {
         _ => {}
     }
 
-    env_logger::init().unwrap();
+    env_logger::init();
 
     let port: u16 = match matches.value_of("rest-port").unwrap().to_string().parse::<u16>() {
         Ok(val) => val,
